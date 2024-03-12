@@ -9,6 +9,7 @@ namespace ConnectThePops.Models
         private SlotModel[,] _slots;
         private int _gridSizeX;
         private int _gridSizeY;
+        private List<SlotModel> _emptySlots;
 
         public GridModel(Vector2Int gridSize, int distance)
         {
@@ -29,6 +30,11 @@ namespace ConnectThePops.Models
         public SlotModel GetSlot(int x, int y)
         {
             return _slots[x, y];
+        }
+
+        public void AddEmptySlot(SlotModel slot)
+        {
+            _emptySlots.Add(slot);
         }
     }
 }

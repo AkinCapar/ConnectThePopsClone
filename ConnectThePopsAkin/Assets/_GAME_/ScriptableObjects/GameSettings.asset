@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a0a2876777284ce1bba2aa7429ba02c, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: 
-  GridSize: {x: 5, y: 5}
-  DistanceBetweenNumbers: 1
+  GridSize: 5
+  DistanceBetweenPops: 1
+  CameraPadding: 1.25

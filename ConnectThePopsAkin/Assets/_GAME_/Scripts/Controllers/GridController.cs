@@ -1,7 +1,9 @@
 using ConnectThePops.Settings;
 using ConnectThePops.Models;
 using ConnectThePops.Views;
+using DG.Tweening;
 using UnityEngine;
+using Zenject;
 
 namespace ConnectThePops.Controllers
 {
@@ -16,21 +18,26 @@ namespace ConnectThePops.Controllers
         private PopView.Factory _popViewFactory;
         private PopsSettings _popsSettings;
         private CameraController _cameraController;
+        private SignalBus _signalBus;
 
         public GridController(GameSettings gameSettings
             , PopView.Factory popViewFactory
             , PopsSettings popsSettings
-            , CameraController cameraController)
+            , CameraController cameraController
+            , SignalBus signalBus)
         {
             _gameSettings = gameSettings;
             _popViewFactory = popViewFactory;
             _popsSettings = popsSettings;
             _cameraController = cameraController;
+            _signalBus = signalBus;
         }
-        
+
         #endregion
+
         public void Initialize()
         {
+            _signalBus.Subscribe<PopsConnectedSignal>(OnPopsConnectedSignal);
             _cameraController.AdjustCamera(_gameSettings.GridSize);
             _gridSize = new Vector2Int(_gameSettings.GridSize, _gameSettings.GridSize);
             _gridModel = new GridModel(_gridSize, _gameSettings.DistanceBetweenPops);
@@ -44,18 +51,60 @@ namespace ConnectThePops.Controllers
             {
                 for (int j = 0; j < _gridSize.y; j++)
                 {
-                    PopView popView =
-                        _popViewFactory.Create(
-                            _popsSettings.Pops[Random.Range(0, _popsSettings.Pops.Count)]);
-                    _gridModel.GetSlot(i,j).SetPopView(popView);
-                    popView.SetPositionImmediate(_gridModel.GetSlot(i,j).WorldPos);
+                    PopView popView = _popViewFactory.Create(_popsSettings.Pops[Random.Range(0, 6)]);
+                    SlotModel slot = _gridModel.GetSlot(i, j);
+                    slot.SetPopView(popView);
+                    slot.PopView.SetCurrentSlot(slot);
+                    popView.SetPositionImmediate(slot.WorldPos);
                 }
+            }
+        }
+
+        private void OnPopsConnectedSignal()
+        {
+            for (int i = 0; i < _gridSize.x; i++)
+            {
+                int emptySlotCountOnY = 0;
+                for (int j = 0; j < _gridSize.y; j++)
+                {
+                    SlotModel slot = _gridModel.GetSlot(i, j);
+                    if (slot.IsEmpty)
+                    {
+                        emptySlotCountOnY++;
+                    }
+
+                    else
+                    {
+                        SlotModel emptySlot = _gridModel.GetSlot(i, j - emptySlotCountOnY);
+                        emptySlot.SetPopView(slot.PopView);
+                        emptySlot.PopView.MoveToNewSlot(emptySlot);
+                    }
+
+                    if (_gridSize.y - 1 == j)
+                    {
+                        SpawnNewPops(i, emptySlotCountOnY);
+                    }
+                }
+            }
+        }
+
+        private void SpawnNewPops(int gridPosX, int spawnAmount)
+        {
+            for (int i = 0; i < spawnAmount; i++)
+            {
+                PopView popView = _popViewFactory.Create(_popsSettings.Pops[Random.Range(0, 6)]);
+                popView.transform.localScale = Vector3.zero;
+                SlotModel slot = _gridModel.GetSlot(gridPosX, _gridSize.y - i - 1);
+                slot.SetPopView(popView);
+                slot.PopView.SetCurrentSlot(slot);
+                popView.SetPositionImmediate(slot.WorldPos);
+                popView.transform.DOScale(Vector3.one / 2, .25f);
             }
         }
 
         public void Dispose()
         {
-            
+            _signalBus.Unsubscribe<PopsConnectedSignal>(OnPopsConnectedSignal);
         }
     }
 }

@@ -2,35 +2,54 @@ using System.Collections;
 using System.Collections.Generic;
 using ConnectThePops.Views;
 using UnityEngine;
+using Zenject;
 
 namespace ConnectThePops.Models
 {
     public class SlotModel
     {
-        private Vector2Int _gridPos;
+        private Vector2Int GridPos { get; }
         private GridModel _grid;
         public Vector2 WorldPos { get; }
 
-        private PopView _popView;
-
+        public PopView PopView { get; private set; }
+        
+        public bool IsEmpty { get; private set; }
 
         
         public SlotModel(Vector2Int gridPos, Vector2 worldPos, GridModel grid)
         {
-            _gridPos = gridPos;
+            GridPos = gridPos;
             _grid = grid;
             WorldPos = worldPos;
         }
 
 
-        public void SetPopView(PopView numberView)
+        public void SetPopView(PopView popView)
         {
-            _popView = numberView;
+            PopView = popView;
+            IsEmpty = false;
+        }
 
-            if (_popView != null)
+        public void SetEmpty()
+        {
+            PopView = null;
+            IsEmpty = true;
+        }
+
+        public float GetDistanceToOtherSlot(SlotModel slot)
+        {
+            return Vector2Int.Distance(GridPos, slot.GridPos);
+        }
+
+        public bool IsAdjacent(SlotModel slot)
+        {
+            if (Vector2Int.Distance(GridPos, slot.GridPos) > Mathf.Sqrt(2))
             {
-                _popView.SetCurrentSlot(this);
+                return false;
             }
+
+            return true;
         }
     }
 }

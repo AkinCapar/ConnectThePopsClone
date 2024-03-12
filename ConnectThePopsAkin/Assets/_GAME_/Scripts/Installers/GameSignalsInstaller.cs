@@ -7,6 +7,10 @@ namespace ConnectThePops.Installer
         public override void InstallBindings()
         {
             SignalBusInstaller.Install(Container);
+
+            Container.DeclareSignal<PopViewTappedSignal>().OptionalSubscriber();
+            Container.DeclareSignal<TappingStoppedSignal>().OptionalSubscriber();
+            Container.DeclareSignal<PopsConnectedSignal>().OptionalSubscriber();
         }
     }
 }

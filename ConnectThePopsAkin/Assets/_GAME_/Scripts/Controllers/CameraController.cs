@@ -25,9 +25,6 @@ namespace ConnectThePops.Controllers
             float cameraPos = maxXY / 2;
 
             _camera.orthographicSize = cameraPos / _camera.aspect + _gameSettings.CameraPadding;
-            Debug.Log("screen height: " + Screen.height);
-            Debug.Log("screen width: " + Screen.width);
-            Debug.Log("aspect: " + _camera.aspect);
             _camera.transform.position = new Vector3(cameraPos, cameraPos, _camera.transform.position.z);
         }
     }

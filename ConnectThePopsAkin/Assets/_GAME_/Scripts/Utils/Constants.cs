@@ -20,6 +20,7 @@ namespace ConnectThePops.Utilities
         
         public struct Tags
         {
+            public const string Pop = "Pop";
         }
     }
 }

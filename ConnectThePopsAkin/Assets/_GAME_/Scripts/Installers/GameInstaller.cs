@@ -24,10 +24,11 @@ namespace ConnectThePops.Installer
             GameSignalsInstaller.Install(Container);
             
             //CONTROLLERS
-            Container.BindInterfacesAndSelfTo<GameController>().AsSingle();
             Container.Bind<CameraController>().AsSingle();
             Container.Bind<GridController>().AsSingle();
-            //Container.BindInterfacesTo<InputController>().AsSingle();
+            Container.BindInterfacesTo<InputController>().AsSingle();
+            Container.Bind<ConnectController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<GameController>().AsSingle();
 
             InstallPops();
         }
