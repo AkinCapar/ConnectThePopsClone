@@ -1,6 +1,5 @@
 using System;
 using ConnectThePops.Utilities;
-using TMPro.EditorUtilities;
 using Zenject;
 
 namespace ConnectThePops.Controllers
