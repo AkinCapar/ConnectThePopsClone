@@ -80,7 +80,7 @@ namespace ConnectThePops.Controllers
                     {
                         SlotModel emptySlot = _gridModel.GetSlot(i, j - emptySlotCountOnY);
                         emptySlot.SetPopView(slot.PopView);
-                        emptySlot.PopView.MoveToNewSlot(emptySlot);
+                        emptySlot.PopView.MoveToNewSlot(emptySlot, _gameSettings.PopsMoveTime).Forget();
                     }
 
                     if (_gridSize.y - 1 == j)
@@ -93,7 +93,6 @@ namespace ConnectThePops.Controllers
 
         private async UniTask SpawnNewPops(int gridPosX, int spawnAmount, float delayTime)
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(delayTime));
             for (int i = 0; i < spawnAmount; i++)
             {
                 PopView popView = _popViewFactory.Create(_popsSettings.Pops[Random.Range(0, 6)]);
@@ -102,6 +101,7 @@ namespace ConnectThePops.Controllers
                 slot.SetPopView(popView);
                 slot.PopView.SetCurrentSlot(slot);
                 popView.SetPositionImmediate(slot.WorldPos);
+                await UniTask.Delay(TimeSpan.FromSeconds(delayTime));
                 popView.transform.DOScale(Vector3.one / 2, _gameSettings.PopsMoveTime);
             }
         }

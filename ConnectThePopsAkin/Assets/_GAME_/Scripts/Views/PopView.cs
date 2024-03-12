@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ConnectThePops.Data;
 using ConnectThePops.Models;
 using ConnectThePops.Settings;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using Zenject;
@@ -69,14 +70,16 @@ namespace ConnectThePops.Views
             CurrentSlot.SetEmpty();
         }
 
-        public void MoveToNewSlot(SlotModel slot)
+        public async UniTask MoveToNewSlot(SlotModel slot, float delayTime)
         {
+            await UniTask.Delay(TimeSpan.FromSeconds(delayTime));
             transform.DOMove(slot.WorldPos, _gameSettings.PopsMoveTime);
             SetCurrentSlot(slot);
         }
 
-        public void SetNewData(PopsData newData)
+        public async UniTask SetNewData(PopsData newData, float delayTime)
         {
+            await UniTask.Delay(TimeSpan.FromSeconds(delayTime));
             _value = newData.popValue;
             _spriteRenderer.sprite = newData.popSprite;
             PopColor = newData.popColor;

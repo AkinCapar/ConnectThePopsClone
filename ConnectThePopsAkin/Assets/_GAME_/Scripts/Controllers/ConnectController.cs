@@ -17,7 +17,6 @@ namespace ConnectThePops.Controllers
         private PopView _firstTappedPop;
         private PopView _previousTappedPop;
         private PopView _currentTappedPop;
-        private bool _tapEnabled;
 
         #region Injection
 
@@ -55,12 +54,10 @@ namespace ConnectThePops.Controllers
             _signalBus.Subscribe<PopViewTappedSignal>(OnPopViewTappedSignal);
             _signalBus.Subscribe<TappingStoppedSignal>(OnTappingStoppedSignal);
 
-            _tapEnabled = true;
         }
 
         private void OnPopViewTappedSignal(PopViewTappedSignal signal)
         {
-            if(!_tapEnabled) {return;}
                 
             if (signal.PopView.IsTapped)
             {
@@ -126,7 +123,6 @@ namespace ConnectThePops.Controllers
 
         private void OnTappingStoppedSignal()
         {
-            if(!_tapEnabled) {return;}
             _lineRenderer.enabled = false;
             _calculationView.gameObject.SetActive(false);
             
@@ -141,14 +137,13 @@ namespace ConnectThePops.Controllers
                 pop.Merge(_currentTappedPop.CurrentSlot);
             }
 
-            DisableTap(_gameSettings.PopsMoveTime * 3).Forget();
-            SendPopsConnectedSignal(_gameSettings.PopsMoveTime).Forget();
+            //DisableTap(_gameSettings.PopsMoveTime * 3).Forget();
+            SendPopsConnectedSignal();
         }
 
-        private async UniTask SendPopsConnectedSignal(float delayTime)
+        private void SendPopsConnectedSignal()
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(delayTime));
-            _currentTappedPop.SetNewData(CalculateAndGetNewPopData());
+            _currentTappedPop.SetNewData(CalculateAndGetNewPopData(), _gameSettings.PopsMoveTime).Forget();
             ClearAll(true);
             _signalBus.Fire<PopsConnectedSignal>();
         }
@@ -195,13 +190,6 @@ namespace ConnectThePops.Controllers
             }
 
             _lineRenderer.enabled = true;
-        }
-
-        private async UniTask DisableTap(float delayTime)
-        {
-            _tapEnabled = false;
-            await UniTask.Delay(TimeSpan.FromSeconds(delayTime));
-            _tapEnabled = true;
         }
 
         public void Dispose()
