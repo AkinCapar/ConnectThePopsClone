@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ConnectThePops.Data;
 using ConnectThePops.Models;
+using ConnectThePops.Settings;
 using DG.Tweening;
 using UnityEngine;
 using Zenject;
@@ -17,13 +18,27 @@ namespace ConnectThePops.Views
         private IMemoryPool _pool;
         public SlotModel CurrentSlot{ get; private set; }
         public bool IsTapped{ get; private set; }
+        public Color PopColor{ get; private set; }
         
+        
+        #region Injection
+
+        private GameSettings _gameSettings;
+
+        [Inject]
+        private void Construct(GameSettings gameSettings)
+        {
+            _gameSettings = gameSettings;
+        }
+
+        #endregion
 
         public void OnSpawned(PopsData data, IMemoryPool pool)
         {
             _value = data.popValue;
             _pool = pool;
             _spriteRenderer.sprite = data.popSprite;
+            PopColor = data.popColor;
         }
 
         public void SetCurrentSlot(SlotModel slot)
@@ -50,19 +65,27 @@ namespace ConnectThePops.Views
 
         public void Merge(SlotModel slot)
         {
-            transform.DOMove(slot.WorldPos, CurrentSlot.GetDistanceToOtherSlot(slot) * .25f);
-            transform.DOScale(Vector2.zero, 1); //TODO delete it, it was a test.
+            transform.DOMove(slot.WorldPos, _gameSettings.PopsMoveTime).OnComplete(() => { _pool.Despawn(this);});
             CurrentSlot.SetEmpty();
         }
 
         public void MoveToNewSlot(SlotModel slot)
         {
-            transform.DOMove(slot.WorldPos, CurrentSlot.GetDistanceToOtherSlot(slot) * .25f);
+            transform.DOMove(slot.WorldPos, _gameSettings.PopsMoveTime);
             SetCurrentSlot(slot);
+        }
+
+        public void SetNewData(PopsData newData)
+        {
+            _value = newData.popValue;
+            _spriteRenderer.sprite = newData.popSprite;
+            PopColor = newData.popColor;
+            transform.DOScale(Vector2.one * .65f, .1f).OnComplete(() => { transform.DOScale(Vector2.one * .5f, .1f); });
         }
         
         public void OnDespawned()
         {
+            IsTapped = false;
         }
 
         public class Factory : PlaceholderFactory<PopsData, PopView>

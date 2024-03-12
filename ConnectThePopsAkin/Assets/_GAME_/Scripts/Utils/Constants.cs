@@ -16,6 +16,8 @@ namespace ConnectThePops.Utilities
         public struct ZenjectIDs
         {
             public const string Camera = "Camera";
+            public const string LineRenderer = "LineRenderer";
+            public const string CalculationView = "CalculationView";
         }
         
         public struct Tags

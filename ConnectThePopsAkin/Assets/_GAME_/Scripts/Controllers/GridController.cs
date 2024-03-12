@@ -1,9 +1,12 @@
+using System;
 using ConnectThePops.Settings;
 using ConnectThePops.Models;
 using ConnectThePops.Views;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace ConnectThePops.Controllers
 {
@@ -82,14 +85,15 @@ namespace ConnectThePops.Controllers
 
                     if (_gridSize.y - 1 == j)
                     {
-                        SpawnNewPops(i, emptySlotCountOnY);
+                        SpawnNewPops(i, emptySlotCountOnY, _gameSettings.PopsMoveTime).Forget();
                     }
                 }
             }
         }
 
-        private void SpawnNewPops(int gridPosX, int spawnAmount)
+        private async UniTask SpawnNewPops(int gridPosX, int spawnAmount, float delayTime)
         {
+            await UniTask.Delay(TimeSpan.FromSeconds(delayTime));
             for (int i = 0; i < spawnAmount; i++)
             {
                 PopView popView = _popViewFactory.Create(_popsSettings.Pops[Random.Range(0, 6)]);
@@ -98,7 +102,7 @@ namespace ConnectThePops.Controllers
                 slot.SetPopView(popView);
                 slot.PopView.SetCurrentSlot(slot);
                 popView.SetPositionImmediate(slot.WorldPos);
-                popView.transform.DOScale(Vector3.one / 2, .25f);
+                popView.transform.DOScale(Vector3.one / 2, _gameSettings.PopsMoveTime);
             }
         }
 

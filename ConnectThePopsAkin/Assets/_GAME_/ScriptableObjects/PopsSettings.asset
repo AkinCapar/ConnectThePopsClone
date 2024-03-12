@@ -41,14 +41,14 @@ MonoBehaviour:
     popValue: 512
     popColor: {r: 0.81568635, g: 0.5647059, b: 0.8078432, a: 0}
   - popSprite: {fileID: 21300000, guid: 83817b03b0f1041c884ccfbb2bfb421c, type: 3}
-    popValue: 1000
+    popValue: 1024
     popColor: {r: 0.59607846, g: 0.427451, b: 0.81568635, a: 0}
   - popSprite: {fileID: 21300000, guid: f23f517091305482db59a694015d6acd, type: 3}
-    popValue: 2000
+    popValue: 2048
     popColor: {r: 0.9058824, g: 0.4039216, b: 0.5568628, a: 0}
   - popSprite: {fileID: 21300000, guid: f63f328e535ce49dc8b8a3bb39a987de, type: 3}
-    popValue: 4000
+    popValue: 4096
     popColor: {r: 0.8196079, g: 0.3803922, b: 0.2627451, a: 0}
   - popSprite: {fileID: 21300000, guid: 9ead32f976f2145a681b947f09e33630, type: 3}
-    popValue: 8000
+    popValue: 8192
     popColor: {r: 0.95294124, g: 0.7411765, b: 0.30588236, a: 0}

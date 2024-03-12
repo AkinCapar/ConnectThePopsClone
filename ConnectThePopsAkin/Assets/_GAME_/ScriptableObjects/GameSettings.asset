@@ -15,3 +15,4 @@ MonoBehaviour:
   GridSize: 5
   DistanceBetweenPops: 1
   CameraPadding: 1.25
+  PopsMoveTime: 0.25

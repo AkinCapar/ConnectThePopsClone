@@ -13,5 +13,7 @@ namespace ConnectThePops.Settings
         
         [Range(1.25f, 3)]
         public float CameraPadding;
+
+        public float PopsMoveTime;
     }
 }
